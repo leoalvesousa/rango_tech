@@ -11,19 +11,10 @@ use App\Entity\Dish;
 
 final class DishController extends AbstractController
 {
-    #[Route('/dish', name: 'list_dish', methods: ['GET'])]
-    public function index(): JsonResponse
-    {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/DishController.php',
-        ]);
-    }
-
     #[Route('/dish', name: 'create_dish', methods: ['POST'])]
     public function create(Request $request, DishRepository $dishRepository): JsonResponse
     {
-        $data = $request->request->all();
+        $data = $request->toArray();
 
         $dish = new Dish();
         $dish->setName($data['name']);
@@ -36,5 +27,85 @@ final class DishController extends AbstractController
         return $this->json([
                 'message' => 'Dish created successfully'
         ],201);
+    }
+
+    #[Route('/dish', name: 'list_dish', methods: ['GET'])]
+    public function getAll(DishRepository $dishRepository): JsonResponse
+    {
+        $dishes = $dishRepository->findBy([], ['id' => 'ASC']);
+
+        $data = [];
+
+        foreach ($dishes as $dish) {
+            $data[] = [
+                'id' => $dish->getId(),
+                'name' => $dish->getName(),
+                'description' => $dish->getDescription(),
+                'price' => $dish->getPrice(),
+                'category' => $dish->getCategory(),
+            ];  
+        }
+
+        return $this->json($data);
+    }
+
+    #[Route('/dish/{id}', name: 'show_dish', methods: ['GET'])]
+    public function getOne(int $id, DishRepository $dishRepository): JsonResponse
+    {
+
+        $dish = $dishRepository->find($id);
+
+        if (!$dish) {
+            return $this->json(['message' => 'Prato não encontrado'], 404);
+        }
+
+        return $this->json([
+            'id' => $dish->getId(),
+            'name' => $dish->getName(),
+            'description' => $dish->getDescription(),
+            'price' => $dish->getPrice(),
+            'category' => $dish->getCategory(),
+        ]);
+    }
+
+    #[Route('/dish/{id}', name: 'update_dish', methods: ['PUT'])]
+    public function update(int $id, Request $request, DishRepository $dishRepository): JsonResponse
+    {
+        $dish = $dishRepository->find($id);
+
+        if (!$dish) {
+            return $this->json(['message' => 'Dish not found'], 404);
+        }
+
+        $data = $request->toArray();
+
+        if (isset($data['name'])) {
+            $dish->setName($data['name']);
+        }
+        if (isset($data['description'])) {
+            $dish->setDescription($data['description']);
+        }
+        if (isset($data['price'])) {
+            $dish->setPrice($data['price']);
+        }
+        if (isset($data['category'])) {
+            $dish->setCategory($data['category']);
+        }
+
+        $dishRepository->add($dish, true);
+
+        return $this->json(['message' => 'Dish Updated!']);
+    }
+
+    #[Route('/dish/{id}', name: 'delete_dish', methods: ['DELETE'])]
+    public function delete(int $id, DishRepository $dishRepository): JsonResponse
+    {
+        $dish = $dishRepository->find($id);
+        if (!$dish) {
+            return $this->json(['message' => 'Dish not found'], 404);
+        }
+        $dishRepository->remove($dish, true);
+
+        return $this->json(['message' => 'Dish deleted successfully']);
     }
 }
