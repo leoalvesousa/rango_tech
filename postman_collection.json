@@ -1,0 +1,99 @@
+{
+  "info": {
+    "name": "Rango Tech API",
+    "description": "Coleção de rotas da API Rango Tech - Gerenciamento de Pratos",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api"
+    },
+    {
+      "key": "dish_id",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Criar prato",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Feijoada\",\n  \"description\": \"Feijoada completa com farofa e couve\",\n  \"price\": 35.90,\n  \"category\": \"Prato Principal\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/dish",
+          "host": ["{{base_url}}"],
+          "path": ["dish"]
+        },
+        "description": "Cria um novo prato no sistema"
+      }
+    },
+    {
+      "name": "Listar todos os pratos",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/dish",
+          "host": ["{{base_url}}"],
+          "path": ["dish"]
+        },
+        "description": "Retorna a lista de todos os pratos"
+      }
+    },
+    {
+      "name": "Buscar prato por ID",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/dish/{{dish_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["dish", "{{dish_id}}"]
+        },
+        "description": "Retorna um prato específico pelo ID"
+      }
+    },
+    {
+      "name": "Atualizar prato",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Feijoada Premium\",\n  \"description\": \"Feijoada completa com costela e linguiça artesanal\",\n  \"price\": 42.90,\n  \"category\": \"Prato Principal\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/dish/{{dish_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["dish", "{{dish_id}}"]
+        },
+        "description": "Atualiza um prato existente (todos os campos são opcionais)"
+      }
+    },
+    {
+      "name": "Excluir prato",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "{{base_url}}/dish/{{dish_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["dish", "{{dish_id}}"]
+        },
+        "description": "Remove um prato do sistema"
+      }
+    }
+  ]
+}
