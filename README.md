@@ -59,7 +59,9 @@ O servidor ficará disponível em `http://localhost:8000` (ou outra porta exibid
 
 Para facilitar os testes da API, foi incluída uma coleção Postman com todas as rotas.
 
-**Como importar:**
+**[Acessar coleção no Postman](https://sousa-leo-alves-5120902.postman.co/workspace/Leonardo-Sousa's-Workspace~9ec091c2-9277-432c-832a-73cbe4f7b364/collection/49270181-12fcc1ef-4da3-4237-ab12-6a1b52d8e7c2?action=share&source=copy-link&creator=49270181)**
+
+**Ou importar o arquivo local:**
 
 1. Abra o Postman
 2. Clique em **Import** e selecione o arquivo `postman_collection.json` na raiz do projeto
