@@ -7,4 +7,6 @@
 /public/bundles/
 /var/
 /vendor/
+/compose.yaml
+/compose.override.yaml
 ###< symfony/framework-bundle ###
