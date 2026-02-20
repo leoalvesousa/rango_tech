@@ -14,6 +14,7 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 
 final class DishController extends AbstractController
 {
+    #[IsGranted('ROLE_ADMIN', message: 'You must be an admin to create a dish.')]
     #[Route('/dish', name: 'create_dish', methods: ['POST'])]
     public function create(
         #[MapRequestPayload] DishDTO $dto, DishService $dishService): JsonResponse
@@ -64,6 +65,7 @@ final class DishController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_ADMIN', message: 'You must be an admin to update a dish.')]
     #[Route('/dish/{id}', name: 'update_dish', methods: ['PUT'])]
     public function update(int $id, Request $request, DishRepository $dishRepository): JsonResponse
     {
@@ -93,6 +95,7 @@ final class DishController extends AbstractController
         return $this->json(['message' => 'Dish Updated!']);
     }
 
+    #[IsGranted('ROLE_ADMIN', message: 'You must be an admin to delete a dish.')]
     #[Route('/dish/{id}', name: 'delete_dish', methods: ['DELETE'])]
     public function delete(int $id, DishRepository $dishRepository): JsonResponse
     {

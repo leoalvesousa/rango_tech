@@ -12,3 +12,7 @@
 /compose.override.yaml
 /docker-compose.yml
 ###< symfony/framework-bundle ###
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###

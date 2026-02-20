@@ -9,3 +9,8 @@
 
 controllers:
     resource: routing.controllers
+
+
+# config/routes.yaml
+api_login_check:
+    path: /users_login

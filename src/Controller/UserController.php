@@ -44,6 +44,7 @@ final class UserController extends AbstractController
         return $this->json($data);
     }
 
+    #[IsGranted('ROLE_ADMIN', message: 'You must be an admin to get a user.')]
     #[Route('/users/{id}', name: 'show_user', methods: ['GET'])]
     public function getOne(int $id, UserRepository $userRepository): JsonResponse
     {
@@ -61,6 +62,7 @@ final class UserController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_ADMIN', message: 'You must be an admin to update a user.')]
     #[Route('/users/{id}', name: 'update_user', methods: ['PUT'])]
     public function update(int $id, Request $request, UserRepository $userRepository): JsonResponse
     {
