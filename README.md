@@ -73,12 +73,77 @@ Para facilitar os testes da API, foi incluída uma coleção Postman com todas a
 
 ---
 
+## Autenticação (Login)
+
+A API usa **JWT** para autenticação. Para acessar as rotas protegidas (pratos, listar/editar usuários etc.), é necessário primeiro criar um usuário e depois fazer login para obter o token.
+
+### 1. Criar usuário (POST /users)
+
+Crie um usuário enviando um `POST` para `/users` com o corpo em JSON:
+
+```bash
+POST http://localhost:8000/users
+Content-Type: application/json
+
+{
+  "email": "seu@email.com",
+  "password": "SuaSenha123!"
+}
+```
+
+**Requisitos da senha:** mínimo 8 caracteres, pelo menos uma letra maiúscula, uma minúscula, um número e um caractere especial.
+
+**Resposta (201):**
+```json
+{
+  "message": "User created successfully!"
+}
+```
+
+### 2. Fazer login (POST /users_login)
+
+Envie um `POST` para `/users_login` com o mesmo `email` e `password` do usuário criado:
+
+```bash
+POST http://localhost:8000/users_login
+Content-Type: application/json
+
+{
+  "username": "seu@email.com",
+  "password": "SuaSenha123!"
+}
+```
+
+**Importante:** o campo no JSON é `username`, mas o valor deve ser o **email** do usuário.
+
+**Resposta (200):** a API retorna um token JWT no corpo, por exemplo:
+
+```json
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+}
+```
+
+### 3. Usar o token nas requisições
+
+Inclua o token no cabeçalho `Authorization` de todas as requisições às rotas protegidas:
+
+```
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...
+```
+
+No Postman: em **Authorization** → Type: **Bearer Token** → cole o valor do `token` retornado no login.
+
+---
+
 ## Rotas da API
 
 | Método | Endpoint      | Descrição              |
 |--------|---------------|------------------------|
-| POST   | `/api/dish`   | Criar novo prato       |
+| POST   | `/users`      | Criar usuário (público) |
+| POST   | `/users_login` | Login (obter JWT)     |
 | GET    | `/api/dish`   | Listar todos os pratos |
+| POST   | `/api/dish`   | Criar novo prato       |
 | GET    | `/api/dish/{id}` | Buscar prato por ID |
 | PUT    | `/api/dish/{id}` | Atualizar prato     |
 | DELETE | `/api/dish/{id}` | Excluir prato      |
