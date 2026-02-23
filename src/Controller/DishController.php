@@ -11,13 +11,13 @@ use App\Entity\Dish;
 use App\Service\DishService;
 use App\Dto\DishDto;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class DishController extends AbstractController
 {
     #[IsGranted('ROLE_ADMIN', message: 'You must be an admin to create a dish.')]
     #[Route('/dish', name: 'create_dish', methods: ['POST'])]
-    public function create(
-        #[MapRequestPayload] DishDTO $dto, DishService $dishService): JsonResponse
+    public function create( #[MapRequestPayload] DishDTO $dto, DishService $dishService): JsonResponse
     {   
         $dishService->createDish($dto);
 
@@ -27,84 +27,36 @@ final class DishController extends AbstractController
     }
 
     #[Route('/dish', name: 'list_dish', methods: ['GET'])]
-    public function getAll(DishRepository $dishRepository): JsonResponse
+    public function getAll(DishService $dishService): JsonResponse
     {
-        $dishes = $dishRepository->findBy([], ['id' => 'ASC']);
-
-        $data = [];
-
-        foreach ($dishes as $dish) {
-            $data[] = [
-                'id' => $dish->getId(),
-                'name' => $dish->getName(),
-                'description' => $dish->getDescription(),
-                'price' => $dish->getPrice(),
-                'category' => $dish->getCategory(),
-            ];  
-        }
+        $data = $dishService->getAllDishes();
 
         return $this->json($data);
     }
 
     #[Route('/dish/{id}', name: 'show_dish', methods: ['GET'])]
-    public function getOne(int $id, DishRepository $dishRepository): JsonResponse
+    public function getOne(int $id, DishService $dishService): JsonResponse
     {
+        $data = $dishService->getDishById($id);
 
-        $dish = $dishRepository->find($id);
-
-        if (!$dish) {
-            return $this->json(['message' => 'Prato não encontrado'], 404);
-        }
-
-        return $this->json([
-            'id' => $dish->getId(),
-            'name' => $dish->getName(),
-            'description' => $dish->getDescription(),
-            'price' => $dish->getPrice(),
-            'category' => $dish->getCategory(),
-        ]);
+        return $this->json($data);
     }
 
     #[IsGranted('ROLE_ADMIN', message: 'You must be an admin to update a dish.')]
     #[Route('/dish/{id}', name: 'update_dish', methods: ['PUT'])]
-    public function update(int $id, Request $request, DishRepository $dishRepository): JsonResponse
+    public function update( int $id, #[MapRequestPayload] DishDTO $dto, DishService $dishService): JsonResponse 
     {
-        $dish = $dishRepository->find($id);
-
-        if (!$dish) {
-            return $this->json(['message' => 'Dish not found'], 404);
-        }
-
-        $data = $request->toArray();
-
-        if (isset($data['name'])) {
-            $dish->setName($data['name']);
-        }
-        if (isset($data['description'])) {
-            $dish->setDescription($data['description']);
-        }
-        if (isset($data['price'])) {
-            $dish->setPrice($data['price']);
-        }
-        if (isset($data['category'])) {
-            $dish->setCategory($data['category']);
-        }
-
-        $dishRepository->add($dish, true);
-
+        $dishService->updateDish($id, $dto);
+    
         return $this->json(['message' => 'Dish Updated!']);
     }
 
     #[IsGranted('ROLE_ADMIN', message: 'You must be an admin to delete a dish.')]
     #[Route('/dish/{id}', name: 'delete_dish', methods: ['DELETE'])]
-    public function delete(int $id, DishRepository $dishRepository): JsonResponse
+    public function delete(int $id, DishService $dishService): JsonResponse
     {
-        $dish = $dishRepository->find($id);
-        if (!$dish) {
-            return $this->json(['message' => 'Dish not found'], 404);
-        }
-        $dishRepository->remove($dish, true);
-
+        $data = $dishService->deleteDish($id);
+   
         return $this->json(['message' => 'Dish deleted successfully']);
     }
 }

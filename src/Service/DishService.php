@@ -64,29 +64,21 @@ class DishService
     ];
 }
 
-    public function updateDish(int $id, array $data): ?Dish
+    public function updateDish(int $id, DishDTO $dto): ?Dish
     {
-        $dto = DishDto::DtoValidation($data);
-
-        $errors = $this->validator->validate($dto);
-
-        if (count($errors) > 0) {
-            throw new BadRequestHttpException((string) $errors);
-        }
-        
         $dish = $this->dishRepository->find($id);
 
         if (!$dish) {
             throw new NotFoundHttpException('Dish not found');
         }
-
-        if (isset($data['name'])) { $dish->setName($data['name']); }
-        if (isset($data['description'])) { $dish->setDescription($data['description']); }
-        if (isset($data['price'])) { $dish->setPrice($data['price']); }
-        if (isset($data['category'])) { $dish->setCategory($data['category']); }
-
+    
+        $dish->setName($dto->name);
+        $dish->setDescription($dto->description);
+        $dish->setPrice($dto->price);
+        $dish->setCategory($dto->category);
+    
         $this->dishRepository->add($dish, true);
-
+    
         return $dish;
     }
     

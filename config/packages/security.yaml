@@ -29,5 +29,6 @@ security:
   
     access_control:
         - { path: ^/users_login, roles: PUBLIC_ACCESS }
-        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/dish, roles: PUBLIC_ACCESS, methods: [GET] }   
         - { path: ^/users, roles: PUBLIC_ACCESS, methods: [POST] }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
