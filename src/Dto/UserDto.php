@@ -10,7 +10,6 @@ class UserDto
         #[Assert\NotBlank(message: "O email é obrigatório.")]
         #[Assert\Email(message: "O email informado não é válido.")]
         public readonly string $email,
-
         #[Assert\NotBlank(message: "A senha é obrigatória.")]
         #[Assert\Length(min: 8, minMessage: "A senha deve ter pelo menos 8 caracteres.")]
         #[Assert\Regex(
@@ -18,7 +17,6 @@ class UserDto
             message: "A senha deve conter pelo menos: uma letra maiúscula, uma minúscula, um número e um caractere especial."
         )]
         public readonly string $password,
-
         #[Assert\Type('array')]
         public readonly array $roles = ['ROLE_USER']
     ) {

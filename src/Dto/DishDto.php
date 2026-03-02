@@ -26,7 +26,7 @@ class DishDto
         $dto->description = $data['description'];
         $dto->price = isset($data['price']) ? (float)$data['price'] : 0;
         $dto->category = $data['category'];
-        
+
         return $dto;
     }
 }

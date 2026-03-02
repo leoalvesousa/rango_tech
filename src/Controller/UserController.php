@@ -12,20 +12,20 @@ use App\Service\UserService;
 use App\Dto\UserDto;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 
-
 final class UserController extends AbstractController
 {
     #[Route('/users', name: 'create_user', methods: ['POST'])]
     public function create(
-        #[MapRequestPayload] UserDto $userDto, UserService $userService): JsonResponse 
-    {
+        #[MapRequestPayload] UserDto $userDto,
+        UserService $userService
+    ): JsonResponse {
         $userService->createUser($userDto);
 
         return $this->json([
             'message' => 'User created successfully!'
         ], 201);
     }
-    
+
     #[Route('/users', name: 'list_user', methods: ['GET'])]
     public function getAll(UserRepository $userRepository): JsonResponse
     {
@@ -38,7 +38,7 @@ final class UserController extends AbstractController
                 'id' => $user->getId(),
                 'email' => $user->getEmail(),
                 'roles' => $user->getRoles(),
-            ];  
+            ];
         }
 
         return $this->json($data);
@@ -98,4 +98,3 @@ final class UserController extends AbstractController
         return $this->json(['message' => 'User deleted successfully']);
     }
 }
-

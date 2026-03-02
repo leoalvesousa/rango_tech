@@ -17,8 +17,8 @@ final class DishController extends AbstractController
 {
     #[IsGranted('ROLE_ADMIN', message: 'You must be an admin to create a dish.')]
     #[Route('/dish', name: 'create_dish', methods: ['POST'])]
-    public function create( #[MapRequestPayload] DishDTO $dto, DishService $dishService): JsonResponse
-    {   
+    public function create(#[MapRequestPayload] DishDTO $dto, DishService $dishService): JsonResponse
+    {
         $dishService->createDish($dto);
 
         return $this->json([
@@ -44,10 +44,10 @@ final class DishController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN', message: 'You must be an admin to update a dish.')]
     #[Route('/dish/{id}', name: 'update_dish', methods: ['PUT'])]
-    public function update( int $id, #[MapRequestPayload] DishDTO $dto, DishService $dishService): JsonResponse 
+    public function update(int $id, #[MapRequestPayload] DishDTO $dto, DishService $dishService): JsonResponse
     {
         $dishService->updateDish($id, $dto);
-    
+
         return $this->json(['message' => 'Dish Updated!']);
     }
 
@@ -56,7 +56,7 @@ final class DishController extends AbstractController
     public function delete(int $id, DishService $dishService): JsonResponse
     {
         $data = $dishService->deleteDish($id);
-   
+
         return $this->json(['message' => 'Dish deleted successfully']);
     }
 }

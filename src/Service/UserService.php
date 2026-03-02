@@ -21,24 +21,25 @@ class UserService
     ) {
     }
 
-   
+
     public function createUser(UserDTO $dto): User
     {
         $errors = $this->validator->validate($dto);
-        
+
         if (count($errors) > 0) {
             throw new BadRequestException((string) $errors);
         }
 
-        
+
         $user = new User();
         $user->setEmail($dto->email);
         $user->setRoles($dto->roles);
 
-        
-        $hashedPassword = $this->passwordHasher->hashPassword($user, $dto->password);        $user->setPassword($hashedPassword);
+
+        $hashedPassword = $this->passwordHasher->hashPassword($user, $dto->password);
         $user->setPassword($hashedPassword);
-        
+        $user->setPassword($hashedPassword);
+
         try {
             $this->userRepository->save($user, true);
         } catch (UniqueConstraintViolationException $e) {
@@ -51,19 +52,19 @@ class UserService
 
     public function updateUser(int $id, UserDTO $dto): User
     {
-        
+
         $errors = $this->validator->validate($dto);
         if (count($errors) > 0) {
             throw new BadRequestException((string) $errors);
         }
 
-        
+
         $user = $this->userRepository->find($id);
         if (!$user) {
             throw new NotFoundHttpException('User not found');
         }
 
-        
+
         $user->setEmail($dto->email);
 
 
@@ -96,26 +97,26 @@ class UserService
     public function getAllUsers(): array
     {
         $users = $this->userRepository->findAll();
-        
+
         $data = [];
         foreach ($users as $user) {
             $data[] = [
                 'id' => $user->getId(),
                 'email' => $user->getEmail(),
                 'roles' => $user->getRoles(),
-            ];  
+            ];
         }
         return $data;
     }
 
-   
+
     public function deleteUser(int $id): void
     {
         $user = $this->userRepository->find($id);
         if (!$user) {
             throw new NotFoundHttpException('User not found');
         }
-        
+
         $this->userRepository->remove($user, true);
     }
 }
