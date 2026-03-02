@@ -10,7 +10,6 @@
 /vendor/
 /compose.yaml
 /compose.override.yaml
-/docker-compose.yml
 ###< symfony/framework-bundle ###
 
 ###> lexik/jwt-authentication-bundle ###
