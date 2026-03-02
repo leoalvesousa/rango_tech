@@ -11,150 +11,96 @@ API REST para gerenciamento de pratos (Dishes) desenvolvida com Symfony.
 
 ## Como rodar o projeto
 
-### 1. Instalar dependências
+⚙️ Setup do Projeto
+1️⃣ Clonar o repositório
+git clone <repo-url>
+cd nome-do-projeto
+2️⃣ Criar o arquivo .env
 
-```bash
+Copiar o arquivo de exemplo:
+
+cp .env.example .env
+
+Editar as variáveis necessárias:
+
+DATABASE_URL=
+APP_SECRET=
+JWT_PASSPHRASE=
+3️⃣ Instalar dependências
 composer install
-```
-
-### 2. Subir o banco de dados com Docker
-
-É necessário ter o **Docker** instalado e em execução.
-
-```bash
+4️⃣ Subir containers Docker
 docker compose up -d
-```
-
-Isso irá subir o container do PostgreSQL na porta 5432.
-
-### 3. Configurar variáveis de ambiente
-
-Copie o arquivo `.env` de exemplo e configure as variáveis de conexão com o banco:
-
-```bash
-cp .env .env.local
-```
-
-Edite o `.env.local` e ajuste as credenciais do PostgreSQL, se necessário:
-
-- `DATABASE_URL="postgresql://app:!ChangeMe!@127.0.0.1:5432/app?serverVersion=16&charset=utf8"`
-
-### 4. Executar as migrations
-
-```bash
+5️⃣ Rodar migrations
 php bin/console doctrine:migrations:migrate
-```
+🔐 Configuração do JWT
+Gerar chaves
+php bin/console lexik:jwt:generate-keypair
 
-### 5. Iniciar o servidor Symfony
+Isso irá criar:
 
-```bash
+config/jwt/private.pem
+config/jwt/public.pem
+
+⚠ Obrigatório para funcionamento do login.
+
+⚠ Windows (se houver erro de OpenSSL)
+
+Caso ocorra erro ao gerar as chaves:
+
+$env:OPENSSL_CONF="C:\php\extras\ssl\openssl.cnf"
+
+Depois execute novamente:
+
+php bin/console lexik:jwt:generate-keypair
+▶ Rodando o Projeto
+
+Opção 1 – Symfony CLI:
+
 symfony serve
-```
 
-O servidor ficará disponível em `http://localhost:8000` (ou outra porta exibida no terminal).
+Opção 2 – PHP embutido:
 
----
+php -S localhost:8000 -t public
+👤 Criar Usuário
 
-## Coleção Postman
+Você pode:
 
-Para facilitar os testes da API, foi incluída uma coleção Postman com todas as rotas.
+Criar via endpoint de registro
 
-**[Acessar coleção no Postman](https://sousa-leo-alves-5120902.postman.co/workspace/Leonardo-Sousa's-Workspace~9ec091c2-9277-432c-832a-73cbe4f7b364/collection/49270181-12fcc1ef-4da3-4237-ab12-6a1b52d8e7c2?action=share&source=copy-link&creator=49270181)**
+Criar via fixture
 
-**Ou importar o arquivo local:**
+Inserir direto no banco
 
-1. Abra o Postman
-2. Clique em **Import** e selecione o arquivo `postman_collection.json` na raiz do projeto
-3. Ou arraste o arquivo para dentro do Postman
+🔑 Autenticação
+Login
 
-**Variável de ambiente sugerida:**
+POST
 
-- `base_url`: `http://localhost:8000/api` (ajuste a porta se o `symfony serve` usar outra)
+/api/login_check
 
----
-
-## Autenticação (Login)
-
-A API usa **JWT** para autenticação. Para acessar as rotas protegidas (pratos, listar/editar usuários etc.), é necessário primeiro criar um usuário e depois fazer login para obter o token.
-
-### 1. Criar usuário (POST /users)
-
-Crie um usuário enviando um `POST` para `/users` com o corpo em JSON:
-
-```bash
-POST http://localhost:8000/users
-Content-Type: application/json
+Body:
 
 {
-  "email": "seu@email.com",
-  "password": "SuaSenha123!"
+  "username": "admin@example.com",
+  "password": "123456"
 }
-```
 
-**Requisitos da senha:** mínimo 8 caracteres, pelo menos uma letra maiúscula, uma minúscula, um número e um caractere especial.
-
-**Resposta (201):**
-```json
-{
-  "message": "User created successfully!"
-}
-```
-
-### 2. Fazer login (POST /users_login)
-
-Envie um `POST` para `/users_login` com o mesmo `email` e `password` do usuário criado:
-
-```bash
-POST http://localhost:8000/users_login
-Content-Type: application/json
+Resposta:
 
 {
-  "username": "seu@email.com",
-  "password": "SuaSenha123!"
+  "token": "JWT_TOKEN"
 }
-```
+🔒 Acessando Rotas Protegidas
 
-**Importante:** o campo no JSON é `username`, mas o valor deve ser o **email** do usuário.
+Adicionar no header:
 
-**Resposta (200):** a API retorna um token JWT no corpo, por exemplo:
+Authorization: Bearer JWT_TOKEN
+📬 Coleções Postman
 
-```json
-{
-  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
-}
-```
+Collection 1:
 
-### 3. Usar o token nas requisições
+https://sousa-leo-alves-5120902.postman.co/...
 
-Inclua o token no cabeçalho `Authorization` de todas as requisições às rotas protegidas:
+Collection 2:
 
-```
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...
-```
-
-No Postman: em **Authorization** → Type: **Bearer Token** → cole o valor do `token` retornado no login.
-
----
-
-## Rotas da API
-
-| Método | Endpoint      | Descrição              |
-|--------|---------------|------------------------|
-| POST   | `/users`      | Criar usuário (público) |
-| POST   | `/users_login` | Login (obter JWT)     |
-| GET    | `/api/dish`   | Listar todos os pratos |
-| POST   | `/api/dish`   | Criar novo prato       |
-| GET    | `/api/dish/{id}` | Buscar prato por ID |
-| PUT    | `/api/dish/{id}` | Atualizar prato     |
-| DELETE | `/api/dish/{id}` | Excluir prato      |
-
-### Exemplo de criação (POST /api/dish)
-
-```json
-{
-  "name": "Feijoada",
-  "description": "Feijoada completa com farofa e couve",
-  "price": 35.90,
-  "category": "Prato Principal"
-}
-```
+https://sousa-leo-alves-5120902.postman.co/...
